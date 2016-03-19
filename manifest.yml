@@ -1,0 +1,11 @@
+declared-services:
+  dialog-service:
+    label: dialog
+    plan: standard
+applications:
+- services:
+  - dialog-service
+  name: test-talk
+  command: ruby app.rb
+  path: .
+  memory: 512M

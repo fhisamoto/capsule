@@ -1,0 +1,19 @@
+data_container:
+  image: bluemix-ruby:dev
+  volumes:
+    - /root
+    - /usr/local/bundle
+
+app: &default
+  image: bluemix-ruby:dev
+  volumes:
+    - .:/app
+  volumes_from:
+    - data_container
+  ports:
+    - 3000:3000
+  working_dir: /app
+
+c:
+  <<: *default
+  command: /bin/bash

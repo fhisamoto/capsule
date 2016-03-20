@@ -8,5 +8,5 @@ def alchemy_api_credentials
 end
 
 AlchemyAPI.configure do |config|
-config.apikey = alchemy_api_credentials['apikey']
+  config.apikey = alchemy_api_credentials['apikey']
 end

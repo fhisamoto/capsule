@@ -2,7 +2,7 @@ require 'sidekiq'
 
 def redis_url
   c = VCAP_Services.credentials('rediscloud')
-  return "redis://#{c['password']}@#{c['hostname']}:#{c['port']}" if c['password']
+  return "redis://:#{c['password']}@#{c['hostname']}:#{c['port']}" if c['password']
 
   "redis://#{c['hostname']}:#{c['port']}"
 end

@@ -8,6 +8,16 @@ data_container:
 redis:
   image: redis
 
+elasticsearch:
+  image: elasticsearch
+
+kibana:
+  image: kibana
+  links:
+    - elasticsearch:elasticsearch
+  ports:
+    - 4000:5601
+
 app: &default
   image: bluemix-ruby:dev
   volumes:
@@ -16,6 +26,7 @@ app: &default
     - data_container
   links:
     - redis:redis
+    - elasticsearch:elasticsearch
   ports:
     - 3000:3000
   working_dir: /app

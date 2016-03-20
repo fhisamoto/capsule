@@ -14,11 +14,12 @@ app: &default
   ports:
     - 3000:3000
   working_dir: /app
-
+  environment:
+    VCAP_SERVICES: '{ "alchemy_api": [ { "credentials": { "apikey": "98cfcb9d595027b5278130e692f69019b9587012" } } ] }'
 c:
   <<: *default
   command: /bin/bash
 
 s:
   <<: *default
-  command: bundle exec rackup -p 3000
+  command: bundle exec unicorn config.ru -p 3000

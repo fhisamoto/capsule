@@ -5,17 +5,26 @@ data_container:
     - /usr/local/bundle
   command: /bin/sh
 
+redis:
+  image: redis
+
 app: &default
   image: bluemix-ruby:dev
   volumes:
     - .:/app
   volumes_from:
     - data_container
+  links:
+    - redis:redis
   ports:
     - 3000:3000
   working_dir: /app
   environment:
-    VCAP_SERVICES: '{ "alchemy_api": [ { "credentials": { "apikey": "98cfcb9d595027b5278130e692f69019b9587012" } } ] }'
+    VCAP_SERVICES: |
+      {
+          "alchemy_api": [ { "credentials": { "apikey": "98cfcb9d595027b5278130e692f69019b9587012" } } ],
+          "rediscloud": [ { "credentials": { "hostname": "redis", "port": "6379" } } ]
+      }
 
 c:
   <<: *default

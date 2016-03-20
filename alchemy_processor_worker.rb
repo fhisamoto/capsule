@@ -1,5 +1,9 @@
 require 'open-uri'
 require 'sidekiq'
+require './config/vcap_services'
+require './config/sidekiq'
+require './config/elasticsearch'
+require './config/alchemy_api'
 
 class AlchemyProcessorWorker
   include Sidekiq::Worker
@@ -9,10 +13,14 @@ class AlchemyProcessorWorker
   def perform(url)
     @page = read_page(url)
     doc = {
-      text: extract_text,
-      keywords: extract_keywords,
-      entities: extract_entities
+      '_type' => 'alchemy',
+      '_id' => url,
+      'text' => extract_text,
+      'keywords' => extract_keywords,
+      'entities' => extract_entities,
+      '@timestamp' => Time.now.utc
     }
+    ES.index(:alchemy).bulk_index [ doc ]
   end
 
   def extract_text

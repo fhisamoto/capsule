@@ -1,8 +1,9 @@
 data_container:
-  image: bluemix-ruby:dev
+  image: ruby:2.3
   volumes:
     - /root
     - /usr/local/bundle
+  command: /bin/sh
 
 app: &default
   image: bluemix-ruby:dev
@@ -17,3 +18,7 @@ app: &default
 c:
   <<: *default
   command: /bin/bash
+
+s:
+  <<: *default
+  command: bundle exec ruby config.ru -p 3000 -c ./config/unicorn.rb

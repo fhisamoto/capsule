@@ -1,5 +1,5 @@
 data_container:
-  image: ruby:2.3
+  image: bluemix-ruby:dev
   volumes:
     - /root
     - /usr/local/bundle
@@ -21,4 +21,4 @@ c:
 
 s:
   <<: *default
-  command: bundle exec ruby config.ru -p 3000 -c ./config/unicorn.rb
+  command: bundle exec rackup -p 3000

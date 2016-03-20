@@ -3,4 +3,4 @@ Bundler.require if defined?(Bundler)
 
 require './app'
 
-run Sinatra::Application
+run App

@@ -6,8 +6,7 @@ class App < Sinatra::Application
   end
 
   post '/submit' do
-    puts params['feed_url']
-    AlchemyProcessorWorker.perform_async(params['feed_url'])
+    Sidekiq::Client.enqueue('AlchemyProcessorWorker', params['feed_url'])
     redirect '/result'
   end
 

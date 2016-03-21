@@ -16,18 +16,25 @@ To start development is necessary to build docker image
   $ cd docker-images && docker build -t bluemix-ruby:dev dev
 ```
 
-Then in the directory where docker-compose.yml is
+Then in the directory where docker-compose.yml is, install the dependencies:
+
+```bash
+  $ docker-compose run --rm c bundle install
+```
+
+and
 
 ```bash
   $ docker-compose run --rm --service-ports s
 ```
+
 to start web server, and
 
 ```bash
   $ docker-compose run --rm w
 ```
-to start worker.
 
+to start worker.
 
 ## Deployment
 

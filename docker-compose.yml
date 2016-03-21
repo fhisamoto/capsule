@@ -10,6 +10,9 @@ redis:
 
 elasticsearch:
   image: elasticsearch
+  ports:
+    - 9200:9200
+    - 9300:9300
 
 kibana:
   image: kibana
@@ -24,12 +27,6 @@ app: &default
     - .:/app
   volumes_from:
     - data_container
-  links:
-    - redis:redis
-    - elasticsearch:elasticsearch
-    - kibana:kibana
-  ports:
-    - 3000:3000
   working_dir: /app
   environment:
     VCAP_SERVICES: |
@@ -46,4 +43,16 @@ c:
 
 s:
   <<: *default
+  links:
+      - redis:redis
+      - kibana:kibana
+  ports:
+    - 3000:3000
   command: bundle exec unicorn config.ru -p 3000
+
+w:
+  <<: *default
+  links:
+    - redis:redis
+    - elasticsearch:elasticsearch
+  command: bundle exec sidekiq -r ./alchemy_processor_worker.rb

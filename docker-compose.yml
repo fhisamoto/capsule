@@ -27,6 +27,7 @@ app: &default
   links:
     - redis:redis
     - elasticsearch:elasticsearch
+    - kibana:kibana
   ports:
     - 3000:3000
   working_dir: /app
@@ -36,6 +37,8 @@ app: &default
           "alchemy_api": [ { "credentials": { "apikey": "98cfcb9d595027b5278130e692f69019b9587012" } } ],
           "rediscloud": [ { "credentials": { "hostname": "redis", "port": "6379" } } ]
       }
+    ELASTICSEARCH_HOST: elasticsearch
+    KIBANA_HOST: kibana
 
 c:
   <<: *default

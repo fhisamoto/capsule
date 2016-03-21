@@ -27,16 +27,41 @@ class AlchemyProcessorWorker
 
   def perform(url)
     configure_alchemy
+    puts "lalalal"
     @page = read_page(url)
     doc = {
-      '_type' => 'alchemy',
+      '_type' => 'page',
       '_id' => url,
       'text' => extract_text,
       'keywords' => extract_keywords,
       'entities' => extract_entities,
-      '@timestamp' => Time.now.utc
+      'date' => Time.now
     }
-    elasticsearch.index(:alchemy).bulk_index [ doc ]
+
+    # create_index
+
+    elasticsearch.index(:alchemy_processor).bulk_index [ doc ]
+  end
+
+  def create_index
+    return if elasticsearch.index(:alchemy_processor).exists?
+    elasticsearch.index(:alchemy_processor).create(mappings)
+  end
+
+  def mappings
+    {
+      mappings: {
+        page: {
+          dynamic: true,
+          properties: {
+            date: {
+              type: "date",
+              format: "yyyy-MM-dd'T'HH:mm:ssZ"
+            }
+          }
+        }
+      }
+    }
   end
 
   def extract_text

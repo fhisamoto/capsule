@@ -1,6 +1,7 @@
 applications:
   - name: dr_brief
     path: .
+    command: bundle exec sidekiq -r ./alchemy_processor_worker.rb
     memory: 128M
   - name: bulma
     path: .

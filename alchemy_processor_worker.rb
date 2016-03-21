@@ -5,26 +5,28 @@ require 'stretcher'
 
 require './config/vcap_services'
 require './config/sidekiq'
-require './config/elasticsearch'
-
-def apikey
-  @apikey ||= VCAP_Services.credentials('alchemy_api')['apikey']
-end
-
-AlchemyAPI.configure do |config|
-  config.apikey = apikey
-end
 
 class AlchemyProcessorWorker
   include Sidekiq::Worker
 
   attr_reader :page
 
+  def apikey
+    @apikey ||= VCAP_Services.credentials('alchemy_api')['apikey']
+  end
+
+  def configure_alchemy
+    AlchemyAPI.configure do |config|
+      config.apikey = apikey
+    end
+  end
+
   def elasticsearch
-    @es ||= Stretcher::Server.new("http://#{ELASTICSEARCH_HOST}:9200")
+    @es ||= Stretcher::Server.new("http://#{ENV['ELASTICSEARCH_HOST']}:9200")
   end
 
   def perform(url)
+    configure_alchemy
     @page = read_page(url)
     doc = {
       '_type' => 'alchemy',

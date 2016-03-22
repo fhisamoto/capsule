@@ -3,7 +3,7 @@ require 'alchemy_api'
 
 require './config/vcap_services'
 require './config/sidekiq'
-require './page_resource'
+require './repositories/page_repository'
 
 class AlchemyProcessorWorker
   include Sidekiq::Worker
@@ -19,7 +19,7 @@ class AlchemyProcessorWorker
   end
 
   def page_resource
-    @resource ||= PageResource.new
+    @resource ||= Repositories::PageRepository.new
   end
 
   def perform(url)

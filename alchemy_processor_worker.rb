@@ -1,15 +1,12 @@
 require 'open-uri'
-require 'sidekiq'
 require 'alchemy_api'
-require 'stretcher'
 
 require './config/vcap_services'
 require './config/sidekiq'
+require './page_resource'
 
 class AlchemyProcessorWorker
   include Sidekiq::Worker
-
-  attr_reader :page
 
   def apikey
     @apikey ||= VCAP_Services.credentials('alchemy_api')['apikey']
@@ -21,47 +18,25 @@ class AlchemyProcessorWorker
     end
   end
 
-  def elasticsearch
-    @es ||= Stretcher::Server.new("http://#{ENV['ELASTICSEARCH_HOST']}:9200")
+  def page_resource
+    @resource ||= PageResource.new
   end
 
   def perform(url)
+    read_page(url)
     configure_alchemy
-    puts "lalalal"
-    @page = read_page(url)
-    doc = {
-      '_type' => 'page',
-      '_id' => url,
-      'text' => extract_text,
-      'keywords' => extract_keywords,
-      'entities' => extract_entities,
-      'date' => Time.now
-    }
-
-    # create_index
-
-    elasticsearch.index(:alchemy_processor).bulk_index [ doc ]
+    page_resource.setup
+    doc = page_resource.new_page(url: url,
+                                 text: extract_text,
+                                 keywords: extract_keywords,
+                                 entities: extract_entities)
+    page_resource.put(doc)
   end
 
-  def create_index
-    return if elasticsearch.index(:alchemy_processor).exists?
-    elasticsearch.index(:alchemy_processor).create(mappings)
-  end
+  attr_reader :page
 
-  def mappings
-    {
-      mappings: {
-        page: {
-          dynamic: true,
-          properties: {
-            date: {
-              type: "date",
-              format: "yyyy-MM-dd'T'HH:mm:ssZ"
-            }
-          }
-        }
-      }
-    }
+  def read_page(url)
+    @page = URI.parse(url).read
   end
 
   def extract_text
@@ -74,9 +49,5 @@ class AlchemyProcessorWorker
 
   def extract_entities
     AlchemyAPI::EntityExtraction.new.search(html: page)
-  end
-
-  def read_page(url)
-    URI.parse(url).read
   end
 end

@@ -10,7 +10,11 @@ class App < Sinatra::Application
     redirect '/result'
   end
 
+  def kibana_url
+    "http://#{ENV['KIBANA_HOST']}:5601/app" + '/kibana#/discover'
+  end
+
   get '/result' do
-    "results"
+    erb :result, locals: { kibana_url: kibana_url }
   end
 end

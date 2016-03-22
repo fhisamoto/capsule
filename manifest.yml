@@ -4,7 +4,12 @@ applications:
     no-route: true
     command: bundle exec sidekiq -r ./alchemy_processor_worker.rb
     memory: 128M
+    services:
+      - AlchemyAPI-r6
+      - Redis Cloud-b9
   - name: bulma
     path: .
     command: bundle exec unicorn config.ru -p $PORT
     memory: 128M
+    services:
+      - Redis Cloud-b9

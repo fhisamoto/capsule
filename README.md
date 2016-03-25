@@ -1,10 +1,12 @@
 # Capsule
 
+![alt tag](https://raw.github.com/fhisamoto/capsule/master/doc/capsule.jpg)
+
 ## Introduction
 
 Capsule is a test application that uses IBM Bluemix with Watson Services.
 
-It uses Watson Alchemy api to analyse natural language to extract entities, keywords and relations and save these informations in elasticsearch for futher analysis.
+It uses Watson Alchemy api to analyse natural language to extract entities, keywords and relations and save these informations in elasticsearch for further analysis.
 
 ## Development
 
